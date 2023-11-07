@@ -1,0 +1,11 @@
+drop table LibraryDepartments;
+drop table Genres;
+drop table Publishers;
+drop table Authors;
+drop table Books;
+drop table Readers;
+drop table BookLoans;
+drop table Penalties;
+drop table LibraryStaff;
+drop table BookReservations;
+drop table Ratings;
