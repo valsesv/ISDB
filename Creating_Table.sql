@@ -100,23 +100,3 @@ create table if not exists Ratings
     rate_amount         int not null,
     rate_text           text
 );
-
--- Creating sequences for serial columns
-CREATE SEQUENCE IF NOT EXISTS loan_id_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS penalty_id_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS reservation_id_seq START 1;
-CREATE SEQUENCE IF NOT EXISTS rate_id_seq START 1;
-
--- Creating triggers for serial columns
-CREATE OR REPLACE FUNCTION set_loan_id()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.loan_id := nextval('loan_id_seq');
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER set_loan_id_trigger
-BEFORE INSERT ON BookLoans
-FOR EACH ROW
-EXECUTE FUNCTION set_loan_id();
