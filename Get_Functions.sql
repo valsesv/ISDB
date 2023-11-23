@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_book_loan_info(in_book_id INT)
+CREATE FUNCTION get_book_loan_info(in_book_id INT)
 RETURNS TABLE (
     book_id INT,
     reader_name VARCHAR,
@@ -14,10 +14,11 @@ SELECT
     bl.return_period
 FROM
     BookLoans bl
-        JOIN Readers r ON bl.reader_id = r.reader_id
+        JOIN
+    Readers r ON bl.reader_id = r.reader_id
 WHERE
         bl.book_id = in_book_id;
-END;
+END
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_reader_reservations(in_reader_id INT)
@@ -41,27 +42,27 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_books_by_department(department_name varchar)
-RETURNS TABLE (
-    book_id INT,
-    name VARCHAR,
-    author VARCHAR,
-    genre VARCHAR,
-    copies INT
-) AS $$
+    RETURNS TABLE (
+                      book_id INT,
+                      name VARCHAR,
+                      author VARCHAR,
+                      genre VARCHAR,
+                      copies INT
+                  ) AS $$
 BEGIN
     RETURN QUERY
-SELECT
-    b.book_id,
-    b.name,
-    a.name AS author,
-    g.name AS genre,
-    b.copies
-FROM
-    Books b
-        JOIN Authors a ON b.author_id = a.author_id
-        JOIN Genres g ON b.genre_id = g.genre_id
-        JOIN LibraryDepartments d ON b.department_id = d.department_id
-WHERE
-    d.name ILIKE '%' || department_name || '%';
+        SELECT
+            b.book_id,
+            b.name,
+            a.name AS author,
+            g.name AS genre,
+            b.copies
+        FROM
+            Books b
+                JOIN Authors a ON b.author_id = a.author_id
+                JOIN Genres g ON b.genre_id = g.genre_id
+                JOIN LibraryDepartments d ON b.department_id = d.department_id
+        WHERE
+                d.name ILIKE '%' || department_name || '%';
 END;
 $$ LANGUAGE plpgsql;

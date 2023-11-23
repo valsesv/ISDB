@@ -106,29 +106,32 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION search_books_by_rating(min_rating INT)
-RETURNS TABLE (
-    book_id INT,
-    name VARCHAR,
-    author VARCHAR,
-    genre VARCHAR,
-    copies INT
-) AS $$
+    RETURNS TABLE (
+                      book_id INT,
+                      name VARCHAR,
+                      author VARCHAR,
+                      genre VARCHAR,
+                      copies INT
+                  ) AS $$
 BEGIN
     RETURN QUERY
-SELECT
-    b.book_id,
-    b.name,
-    a.name AS author,
-    g.name AS genre,
-    b.copies
-FROM
-    Books b
-        JOIN Authors a ON b.author_id = a.author_id
-        JOIN Genres g ON b.genre_id = g.genre_id
-        JOIN Ratings r ON b.book_id = r.book_id
-WHERE
-        AVG(r.rate_amount) >= min_rating;
+        SELECT
+            b.book_id,
+            b.name,
+            a.name AS author,
+            g.name AS genre,
+            b.copies
+        FROM
+            Books b
+                JOIN Authors a ON b.author_id = a.author_id
+                JOIN Genres g ON b.genre_id = g.genre_id
+                JOIN Ratings r ON b.book_id = r.book_id
+        GROUP BY
+            b.book_id, a.name, g.name
+        HAVING
+                AVG(r.rate_amount) >= min_rating;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
